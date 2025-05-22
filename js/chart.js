@@ -1,6 +1,10 @@
 // === charts.js ===
+function randomColor() {
+  return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
+}
+
 function renderCharts(data) {
-  // Pie chart: Activity Sectors
+  // Pie Chart: Activity Sector
   const sectorCount = {};
   data.forEach(item => {
     const sector = item["Activity Sector"];
@@ -21,12 +25,14 @@ function renderCharts(data) {
     },
     options: {
       plugins: {
-        legend: { position: "bottom" }
+        legend: {
+          position: 'bottom'
+        }
       }
     }
   });
 
-  // Bar chart: Activity Implementation Status
+  // Bar Chart: Activity Implementation Status
   const statusCount = {};
   data.forEach(item => {
     const status = item["Activity Implementation Status"];
@@ -48,26 +54,23 @@ function renderCharts(data) {
     options: {
       indexAxis: 'y',
       scales: {
-        x: { beginAtZero: true }
+        x: {
+          beginAtZero: true
+        }
       }
     }
   });
 }
 
-// Utility
-function randomColor() {
-  return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
-}
-
 function renderProjectList(data) {
   const listEl = document.getElementById("projectList");
   listEl.innerHTML = "";
-  const projects = new Set();
+  const seen = new Set();
 
   data.forEach(item => {
     const project = item["Name of project"];
-    if (project && !projects.has(project)) {
-      projects.add(project);
+    if (project && !seen.has(project)) {
+      seen.add(project);
       const li = document.createElement("li");
       li.textContent = project;
       listEl.appendChild(li);
@@ -89,4 +92,35 @@ function renderAgencies(data) {
       agencyEl.appendChild(li);
     }
   });
+}
+
+function renderCollectorsTable(data) {
+  const table = document.getElementById("collectorTableBody");
+  table.innerHTML = "";
+  const counts = {};
+  let total = 0;
+
+  data.forEach(item => {
+    const name = item["Name of enumerator"];
+    const sector = item["Activity Sector"];
+    if (name) {
+      if (!counts[name]) {
+        counts[name] = { count: 0, sector };
+      }
+      counts[name].count += 1;
+    }
+  });
+
+  Object.entries(counts).forEach(([name, info]) => {
+    total += info.count;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="px-2 py-1">${name}</td>
+      <td class="px-2 py-1">${info.count}</td>
+      <td class="px-2 py-1">${info.sector}</td>
+    `;
+    table.appendChild(tr);
+  });
+
+  document.getElementById("totalSubmissions").textContent = total;
 }
