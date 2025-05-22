@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AfDB Project Dashboard - Rwanda</title>
+  <link href="css/tailwind.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body class="bg-gray-100 font-sans">
+  <header class="bg-white shadow p-4 flex justify-between items-center">
+    <img src="assets/logo.png" alt="AfDB Logo" class="h-12">
+    <h1 class="text-2xl font-bold text-gray-800">AfDB Rwanda - Project Activities Dashboard</h1>
+  </header>
+
+  <main class="p-4 grid grid-cols-4 gap-4">
+    <!-- Left Column -->
+    <aside class="col-span-1 space-y-4">
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="font-semibold text-lg mb-2">Activity Sector Distribution</h2>
+        <canvas id="sectorPieChart"></canvas>
+      </div>
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="font-semibold text-lg mb-2">Submitted Projects</h2>
+        <ul id="projectList" class="list-disc list-inside text-sm text-gray-700"></ul>
+      </div>
+    </aside>
+
+    <!-- Map Center -->
+    <section class="col-span-2 bg-white p-4 rounded shadow">
+      <h2 class="font-semibold text-lg mb-2">Map of Activities in Rwanda</h2>
+      <div id="map" style="height: 500px;"></div>
+    </section>
+
+    <!-- Right Column -->
+    <aside class="col-span-1 space-y-4">
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="font-semibold text-lg mb-2">Activity Status Overview</h2>
+        <canvas id="statusChart"></canvas>
+      </div>
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="font-semibold text-lg mb-2">Implementing Agencies</h2>
+        <ul id="agencyList" class="list-disc list-inside text-sm text-gray-700"></ul>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Footer Table -->
+  <footer class="p-4">
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="font-semibold text-lg mb-2">Top Collectors</h2>
+      <table class="table-auto w-full text-left text-sm">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-2 py-1">Name</th>
+            <th class="px-2 py-1">Submissions</th>
+            <th class="px-2 py-1">Activity Sector</th>
+          </tr>
+        </thead>
+        <tbody id="collectorTableBody">
+          <!-- Data will be inserted here -->
+        </tbody>
+        <tfoot>
+          <tr class="bg-gray-100 font-bold">
+            <td class="px-2 py-1">Total</td>
+            <td id="totalSubmissions" class="px-2 py-1"></td>
+            <td class="px-2 py-1"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/map.js"></script>
+</body>
+</html>
