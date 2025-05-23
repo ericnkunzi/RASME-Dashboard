@@ -1,27 +1,19 @@
-// map.js
+// Initialize Leaflet Map
+const map = L.map('map').setView([-1.9403, 29.8739], 7); // Center on Rwanda
 
-let map;
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
 
-function initializeMap() {
-  map = L.map('map').setView([-1.95, 30.06], 7); // Rwanda
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18
-  }).addTo(map);
-}
-
-function plotMapMarkers(data) {
-  if (!map) initializeMap();
-
-  data.forEach(entry => {
-    const lat = parseFloat(entry.latitude);
-    const lon = parseFloat(entry.longitude);
-    const name = entry.project_name || "Unnamed Project";
-
-    if (!isNaN(lat) && !isNaN(lon)) {
-      L.marker([lat, lon])
+// Placeholder for adding markers
+// You will add project markers here based on Kobo data when available
+function addProjectMarkers(projects) {
+  projects.forEach(proj => {
+    if(proj.location && proj.location.latitude && proj.location.longitude){
+      L.marker([proj.location.latitude, proj.location.longitude])
         .addTo(map)
-        .bindPopup(`<strong>${name}</strong><br>${entry.sector || ''}`);
+        .bindPopup(`<b>${proj.project_name}</b><br>${proj.activity_sector}`);
     }
   });
 }
