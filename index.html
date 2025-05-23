@@ -11,7 +11,7 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Leaflet for maps (Fixed integrity hashes) -->
+  <!-- Leaflet for maps -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -42,7 +42,7 @@
       <!-- Project List -->
       <div class="bg-white p-4 rounded shadow">
         <h2 class="text-lg font-semibold mb-2">Submitted Projects</h2>
-        <ul id="projectList" class="list-disc list-inside text-sm space-y-1"></ul>
+        <ul id="projectList" class="list-disc list-inside text-sm space-y-1 max-h-64 overflow-auto"></ul>
       </div>
     </section>
 
@@ -63,7 +63,7 @@
       <!-- Implementing Agencies -->
       <div class="bg-white p-4 rounded shadow">
         <h2 class="text-lg font-semibold mb-2">Implementing Agencies</h2>
-        <ul id="agencyList" class="list-disc list-inside text-sm space-y-1"></ul>
+        <ul id="agencyList" class="list-disc list-inside text-sm space-y-1 max-h-64 overflow-auto"></ul>
       </div>
     </section>
   </main>
