@@ -1,42 +1,76 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const workerProxyUrl = "https://curly-wildflower-b618.mugeric84.workers.dev";
-  const koboUrl = "https://kf.kobotoolbox.org/api/v2/assets/aGr5kutzkG7nrHiEyH7vCt/data.json";
-  const targetUrl = encodeURIComponent(koboUrl);
+// main.js
 
-  fetch(`${workerProxyUrl}/?url=${targetUrl}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log("✅ Kobo data loaded via Worker:", data);
-      // Replace this with your own logic to display data on the dashboard
-      displayData(data);
-    })
-    .catch(error => {
-      console.error("❌ Failed to fetch Kobo Data:", error);
-      alert("Could not load data from KoboToolbox. Check console for details.");
-    });
+const WORKER_URL = 'https://curly-wildflower-b618.mugeric84.workers.dev?url=';
+const KOBO_API_URL = 'https://kf.kobotoolbox.org/api/v2/assets/aVtxPM7pF46d7NwZL9F8ut/data/';
 
-  function displayData(data) {
-    const tableBody = document.getElementById("data-table-body");
-    if (!tableBody) return;
+async function loadKoboData() {
+  try {
+    const response = await fetch(WORKER_URL + encodeURIComponent(KOBO_API_URL));
+    const data = await response.json();
 
-    tableBody.innerHTML = "";
+    if (!data.results || data.results.length === 0) {
+      console.error("No data found.");
+      return;
+    }
 
-    data.results.forEach(item => {
-      const row = document.createElement("tr");
+    console.log("✅ Kobo data loaded via Worker:", data);
 
-      // Customize this based on your Kobo data fields
-      row.innerHTML = `
-        <td class="border px-4 py-2">${item._id || ""}</td>
-        <td class="border px-4 py-2">${item._submission_time || ""}</td>
-        <td class="border px-4 py-2">${item.some_field || "N/A"}</td>
-      `;
-
-      tableBody.appendChild(row);
-    });
+    renderPieChart(data.results);
+    renderStatusChart(data.results);
+    updateProjectList(data.results);
+    updateAgencyList(data.results);
+    updateCollectorTable(data.results);
+    plotMapMarkers(data.results);
+  } catch (error) {
+    console.error("❌ Error loading Kobo data:", error);
   }
-});
+}
+
+function updateProjectList(data) {
+  const list = document.getElementById("projectList");
+  list.innerHTML = "";
+  data.slice(0, 10).forEach(entry => {
+    const li = document.createElement("li");
+    li.textContent = entry.project_name || "Unnamed";
+    list.appendChild(li);
+  });
+}
+
+function updateAgencyList(data) {
+  const agencies = [...new Set(data.map(e => e.agency || "Unknown"))];
+  const list = document.getElementById("agencyList");
+  list.innerHTML = "";
+  agencies.forEach(agency => {
+    const li = document.createElement("li");
+    li.textContent = agency;
+    list.appendChild(li);
+  });
+}
+
+function updateCollectorTable(data) {
+  const counts = {};
+  data.forEach(e => {
+    const name = e.enumerator_name || "Unknown";
+    const sector = e.sector || "Unknown";
+    if (!counts[name]) counts[name] = { count: 0, sector };
+    counts[name].count += 1;
+  });
+
+  const tbody = document.getElementById("collectorTableBody");
+  tbody.innerHTML = "";
+  let total = 0;
+
+  Object.entries(counts).forEach(([name, info]) => {
+    total += info.count;
+    const row = `<tr>
+      <td class="px-2 py-1">${name}</td>
+      <td class="px-2 py-1">${info.count}</td>
+      <td class="px-2 py-1">${info.sector}</td>
+    </tr>`;
+    tbody.innerHTML += row;
+  });
+
+  document.getElementById("totalSubmissions").textContent = total;
+}
+
+window.addEventListener("DOMContentLoaded", loadKoboData);
