@@ -2,99 +2,99 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AfDB Project Dashboard - Rwanda</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard - Kobo Data</title>
 
-  <!-- Tailwind CSS via CDN (Not for production, but okay for now) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Leaflet for maps (Fixed integrity hashes) -->
+  <!-- Leaflet CSS for Map -->
   <link
     rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    integrity="sha256-sA+4XyLv3yUczPjAHSzIFs8j74h32vC7C1XwEJ1/tjk="
     crossorigin=""
   />
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
+
+  <!-- Tailwind CSS CDN for basic styling (OK for dev/test) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    #map {
+      height: 400px;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-gray-100 p-4">
 
-  <header class="bg-blue-900 text-white p-4 text-center">
-    <h1 class="text-2xl font-bold">AfDB Project Activity Dashboard - Rwanda</h1>
-  </header>
+  <h1 class="text-3xl font-bold mb-4">Project Dashboard</h1>
 
-  <main class="p-4 grid grid-cols-4 gap-4">
-    <!-- LEFT COLUMN -->
-    <section class="col-span-1 space-y-4">
-      <!-- Pie Chart -->
-      <div class="bg-white p-4 rounded shadow">
-        <h2 class="text-lg font-semibold mb-2">Activity Sectors (%)</h2>
-        <canvas id="sectorPieChart" width="400" height="400"></canvas>
-      </div>
-
-      <!-- Project List -->
-      <div class="bg-white p-4 rounded shadow">
-        <h2 class="text-lg font-semibold mb-2">Submitted Projects</h2>
-        <ul id="projectList" class="list-disc list-inside text-sm space-y-1"></ul>
-      </div>
-    </section>
-
-    <!-- CENTER MAP -->
-    <section class="col-span-2 bg-white p-4 rounded shadow">
-      <h2 class="text-lg font-semibold mb-2">Project Locations</h2>
-      <div id="map" class="w-full h-[550px] rounded"></div>
-    </section>
-
-    <!-- RIGHT COLUMN -->
-    <section class="col-span-1 space-y-4">
-      <!-- Activity Implementation Status -->
-      <div class="bg-white p-4 rounded shadow">
-        <h2 class="text-lg font-semibold mb-2">Implementation Status</h2>
-        <canvas id="statusChart" width="400" height="400"></canvas>
-      </div>
-
-      <!-- Implementing Agencies -->
-      <div class="bg-white p-4 rounded shadow">
-        <h2 class="text-lg font-semibold mb-2">Implementing Agencies</h2>
-        <ul id="agencyList" class="list-disc list-inside text-sm space-y-1"></ul>
-      </div>
-    </section>
-  </main>
-
-  <!-- Collector Table -->
-  <section class="p-4 bg-white m-4 rounded shadow">
-    <h2 class="text-lg font-semibold mb-2">Top Enumerators</h2>
-    <table class="w-full text-left border">
-      <thead class="bg-blue-100 text-sm">
+  <!-- Project List Table -->
+  <section class="mb-6 bg-white p-4 rounded shadow">
+    <h2 class="text-xl font-semibold mb-2">Projects List</h2>
+    <table class="w-full table-auto border-collapse border border-gray-300">
+      <thead>
         <tr>
-          <th class="px-2 py-1">Enumerator Name</th>
-          <th class="px-2 py-1">Submissions</th>
-          <th class="px-2 py-1">Activity Sector</th>
+          <th class="border border-gray-300 px-2 py-1">Project Name</th>
+          <th class="border border-gray-300 px-2 py-1">Activity Sector</th>
+          <th class="border border-gray-300 px-2 py-1">Location</th>
         </tr>
       </thead>
-      <tbody id="collectorTableBody" class="text-sm"></tbody>
-      <tfoot class="bg-gray-100 text-sm font-bold">
-        <tr>
-          <td class="px-2 py-1">Total</td>
-          <td class="px-2 py-1" id="totalSubmissions"></td>
-          <td></td>
-        </tr>
-      </tfoot>
+      <tbody id="project-list-body"></tbody>
     </table>
   </section>
 
-  <!-- JS scripts -->
-  <script src="js/charts.js"></script>
-  <script src="js/map.js"></script>
-  <script src="js/main.js"></script>
+  <!-- Map -->
+  <section class="mb-6 bg-white p-4 rounded shadow">
+    <h2 class="text-xl font-semibold mb-2">Project Locations Map</h2>
+    <div id="map"></div>
+  </section>
+
+  <!-- Charts -->
+  <section class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">Activity Sector Distribution</h2>
+      <canvas id="sectorPieChart" width="400" height="300"></canvas>
+    </div>
+
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">Implementation Status</h2>
+      <canvas id="statusBarChart" width="400" height="300"></canvas>
+    </div>
+  </section>
+
+  <!-- Enumerators Table -->
+  <section class="mb-6 bg-white p-4 rounded shadow">
+    <h2 class="text-xl font-semibold mb-2">Enumerators Submissions</h2>
+    <table class="w-full table-auto border-collapse border border-gray-300">
+      <thead>
+        <tr>
+          <th class="border border-gray-300 px-2 py-1">Enumerator Name</th>
+          <th class="border border-gray-300 px-2 py-1">Submissions</th>
+        </tr>
+      </thead>
+      <tbody id="enumerators-table-body"></tbody>
+    </table>
+  </section>
+
+  <!-- Scripts -->
+
+  <!-- Leaflet JS for Map -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+    integrity="sha256-QVt7BguvT9GhPt4oSLFmA7rpj4yfAl3s4qH+Q+uqxP4="
+    crossorigin=""
+  ></script>
+
+  <!-- Chart.js -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"
+  ></script>
+
+  <!-- Your JS files -->
   <script src="js/koboFetch.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/charts.js"></script>
 
 </body>
 </html>
