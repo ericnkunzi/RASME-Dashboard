@@ -1,3 +1,4 @@
+// Fetch Kobo data with your API token
 fetch('https://kf.kobotoolbox.org/api/v2/assets/aGr5kutzkG7nrHiEyH7vCt/data/', {
   method: 'GET',
   headers: {
@@ -12,7 +13,11 @@ fetch('https://kf.kobotoolbox.org/api/v2/assets/aGr5kutzkG7nrHiEyH7vCt/data/', {
 })
 .then(data => {
   console.log('Kobo API data:', data);
-  // TODO: Use data here to update your dashboard
+  // TODO: Process and update your dashboard with this data
+  // For example:
+  // updateProjectList(data);
+  // updateCharts(data);
+  // updateMapMarkers(data);
 })
 .catch(error => {
   console.error('Kobo API fetch error:', error);
