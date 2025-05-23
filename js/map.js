@@ -1,30 +1,27 @@
-// === map.js ===
+// map.js
+
 let map;
 
-function renderMap(data) {
-  if (!map) {
-    map = L.map("map").setView([-1.9403, 29.8739], 8); // Rwanda center
+function initializeMap() {
+  map = L.map('map').setView([-1.95, 30.06], 7); // Rwanda
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      attribution: "&copy; OpenStreetMap contributors"
-    }).addTo(map);
-  }
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18
+  }).addTo(map);
+}
 
-  data.forEach(item => {
-    const lat = parseFloat(item["latitude"]);
-    const lng = parseFloat(item["longitude"]);
-    const name = item["Name of project"];
-    const sector = item["Activity Sector"];
+function plotMapMarkers(data) {
+  if (!map) initializeMap();
 
-    if (!isNaN(lat) && !isNaN(lng)) {
-      const marker = L.circleMarker([lat, lng], {
-        radius: 6,
-        color: randomColor(),
-        fillOpacity: 0.7
-      }).addTo(map);
+  data.forEach(entry => {
+    const lat = parseFloat(entry.latitude);
+    const lon = parseFloat(entry.longitude);
+    const name = entry.project_name || "Unnamed Project";
 
-      marker.bindPopup(`<strong>${name}</strong><br>${sector}`);
+    if (!isNaN(lat) && !isNaN(lon)) {
+      L.marker([lat, lon])
+        .addTo(map)
+        .bindPopup(`<strong>${name}</strong><br>${entry.sector || ''}`);
     }
   });
 }
