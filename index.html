@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AfDB Project Dashboard - Rwanda</title>
 
   <!-- Tailwind CSS via CDN (Not for production, but okay for now) -->
@@ -42,7 +42,7 @@
       <!-- Project List -->
       <div class="bg-white p-4 rounded shadow">
         <h2 class="text-lg font-semibold mb-2">Submitted Projects</h2>
-        <ul id="projectList" class="list-disc list-inside text-sm space-y-1 max-h-64 overflow-auto"></ul>
+        <ul id="projectList" class="list-disc list-inside text-sm space-y-1"></ul>
       </div>
     </section>
 
@@ -63,7 +63,7 @@
       <!-- Implementing Agencies -->
       <div class="bg-white p-4 rounded shadow">
         <h2 class="text-lg font-semibold mb-2">Implementing Agencies</h2>
-        <ul id="agencyList" class="list-disc list-inside text-sm space-y-1 max-h-64 overflow-auto"></ul>
+        <ul id="agencyList" class="list-disc list-inside text-sm space-y-1"></ul>
       </div>
     </section>
   </main>
@@ -91,6 +91,31 @@
   </section>
 
   <!-- JS scripts -->
+  <script>
+    // --- Test Kobo API direct fetch on page load ---
+    window.addEventListener('load', () => {
+      fetch('https://kf.kobotoolbox.org/api/v2/assets/', {
+        method: 'GET',
+        headers: {
+          // No auth here, testing public access & CORS
+        }
+      })
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        console.log('Kobo API data fetched successfully:', data);
+        alert('Kobo API fetch successful! Check console for data.');
+      })
+      .catch(error => {
+        console.error('Kobo API fetch error:', error);
+        alert('Kobo API fetch failed! Check console for error.');
+      });
+    });
+  </script>
+
+  <!-- Placeholders for your other scripts -->
   <script src="js/charts.js"></script>
   <script src="js/map.js"></script>
   <script src="js/main.js"></script>
