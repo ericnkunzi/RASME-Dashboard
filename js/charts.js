@@ -1,60 +1,104 @@
-// Initialize Charts with empty data - to be updated when Kobo data arrives
+// charts.js
 
-// Pie chart for Activity Sectors
-const ctxSector = document.getElementById('sectorPieChart').getContext('2d');
-const sectorPieChart = new Chart(ctxSector, {
-  type: 'pie',
-  data: {
-    labels: [], // sectors
-    datasets: [{
-      label: 'Activity Sector Distribution',
-      data: [],
-      backgroundColor: [
-        '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'
-      ],
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { position: 'bottom' }
-    }
+let sectorPieChart;
+let statusBarChart;
+
+// Update or create the Pie Chart for Activity Sector distribution
+function updateSectorPieChart(data) {
+  // Count projects by sector
+  const sectorCounts = {};
+  data.forEach((item) => {
+    const sector = item.activity_sector || 'Unknown';
+    sectorCounts[sector] = (sectorCounts[sector] || 0) + 1;
+  });
+
+  const labels = Object.keys(sectorCounts);
+  const counts = Object.values(sectorCounts);
+
+  const ctx = document.getElementById('sectorPieChart').getContext('2d');
+
+  if (sectorPieChart) {
+    sectorPieChart.data.labels = labels;
+    sectorPieChart.data.datasets[0].data = counts;
+    sectorPieChart.update();
+  } else {
+    sectorPieChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Projects by Sector',
+            data: counts,
+            backgroundColor: [
+              '#4ade80', // green
+              '#60a5fa', // blue
+              '#fbbf24', // yellow
+              '#f87171', // red
+              '#a78bfa', // purple
+              '#f472b6', // pink
+              '#34d399', // teal
+            ],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+          },
+        },
+      },
+    });
   }
-});
-
-// Bar chart for Implementation Status
-const ctxStatus = document.getElementById('statusChart').getContext('2d');
-const statusChart = new Chart(ctxStatus, {
-  type: 'bar',
-  data: {
-    labels: ['Completed', 'Ongoing', 'Not Started'],
-    datasets: [{
-      label: 'Number of Projects',
-      data: [0, 0, 0],
-      backgroundColor: ['#22c55e', '#3b82f6', '#f87171']
-    }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: { beginAtZero: true }
-    }
-  }
-});
-
-// Function to update sectorPieChart data
-function updateSectorPieChart(sectorsData) {
-  sectorPieChart.data.labels = Object.keys(sectorsData);
-  sectorPieChart.data.datasets[0].data = Object.values(sectorsData);
-  sectorPieChart.update();
 }
 
-// Function to update statusChart data
-function updateStatusChart(statusData) {
-  statusChart.data.datasets[0].data = [
-    statusData.completed || 0,
-    statusData.ongoing || 0,
-    statusData.not_started || 0
-  ];
-  statusChart.update();
+// Update or create the Bar Chart for Implementation Status
+function updateStatusChart(data) {
+  // Count projects by implementation status
+  const statusCounts = {};
+  data.forEach((item) => {
+    const status = item.implementation_status || 'Unknown';
+    statusCounts[status] = (statusCounts[status] || 0) + 1;
+  });
+
+  const labels = Object.keys(statusCounts);
+  const counts = Object.values(statusCounts);
+
+  const ctx = document.getElementById('statusBarChart').getContext('2d');
+
+  if (statusBarChart) {
+    statusBarChart.data.labels = labels;
+    statusBarChart.data.datasets[0].data = counts;
+    statusBarChart.update();
+  } else {
+    statusBarChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Implementation Status',
+            data: counts,
+            backgroundColor: '#60a5fa', // blue
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            precision: 0,
+          },
+        },
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
+    });
+  }
 }
