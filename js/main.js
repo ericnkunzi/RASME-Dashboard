@@ -1,44 +1,42 @@
-// main.js
+document.addEventListener("DOMContentLoaded", function () {
+  const workerProxyUrl = "https://curly-wildflower-b618.mugeric84.workers.dev";
+  const koboUrl = "https://kf.kobotoolbox.org/api/v2/assets/aGr5kutzkG7nrHiEyH7vCt/data.json";
+  const targetUrl = encodeURIComponent(koboUrl);
 
-// Base URL of your Cloudflare Worker proxy
-const proxyBaseURL = "https://curly-wildflower-b618.mugeric84.workers.dev/";
+  fetch(`${workerProxyUrl}/?url=${targetUrl}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log("✅ Kobo data loaded via Worker:", data);
+      // Replace this with your own logic to display data on the dashboard
+      displayData(data);
+    })
+    .catch(error => {
+      console.error("❌ Failed to fetch Kobo Data:", error);
+      alert("Could not load data from KoboToolbox. Check console for details.");
+    });
 
-// Original Kobo Toolbox API URL
-const koboAPI = "https://kf.kobotoolbox.org/api/v2/assets/aGr5kutzkG7nrHiEyH7vCt/data.json";
+  function displayData(data) {
+    const tableBody = document.getElementById("data-table-body");
+    if (!tableBody) return;
 
-// Full proxied URL
-const proxiedKoboURL = proxyBaseURL + koboAPI;
+    tableBody.innerHTML = "";
 
-// Fetch Kobo Toolbox data using the proxy
-async function fetchKoboData() {
-  try {
-    const response = await fetch(proxiedKoboURL);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    console.log("Kobo Data loaded:", data);
-    // Proceed to process and visualize data here
-    processKoboData(data);
-  } catch (error) {
-    console.error("❌ Failed to fetch Kobo Data:", error);
-    alert("Could not load data from KoboToolbox. Check console for details.");
+    data.results.forEach(item => {
+      const row = document.createElement("tr");
+
+      // Customize this based on your Kobo data fields
+      row.innerHTML = `
+        <td class="border px-4 py-2">${item._id || ""}</td>
+        <td class="border px-4 py-2">${item._submission_time || ""}</td>
+        <td class="border px-4 py-2">${item.some_field || "N/A"}</td>
+      `;
+
+      tableBody.appendChild(row);
+    });
   }
-}
-
-// Example function to process Kobo data (replace with your actual processing code)
-function processKoboData(data) {
-  // Your existing data handling and chart/map rendering here
-  // For example:
-  // renderCharts(data);
-  // updateMap(data);
-}
-
-// Call the fetch function on page load or as needed
-document.addEventListener("DOMContentLoaded", () => {
-  fetchKoboData();
 });
-
-// Your other existing functions and event listeners below
-// ...
-
