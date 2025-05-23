@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AfDB Project Dashboard - Rwanda</title>
 
   <!-- Tailwind CSS via CDN (Not for production, but okay for now) -->
@@ -11,7 +11,7 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Leaflet for maps -->
+  <!-- Leaflet for maps (Fixed integrity hashes) -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -91,33 +91,10 @@
   </section>
 
   <!-- JS scripts -->
-  <script>
-    // --- Test Kobo API direct fetch on page load ---
-    window.addEventListener('load', () => {
-      fetch('https://kf.kobotoolbox.org/api/v2/assets/', {
-        method: 'GET',
-        headers: {
-          // No auth here, testing public access & CORS
-        }
-      })
-      .then(response => {
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.json();
-      })
-      .then(data => {
-        console.log('Kobo API data fetched successfully:', data);
-        alert('Kobo API fetch successful! Check console for data.');
-      })
-      .catch(error => {
-        console.error('Kobo API fetch error:', error);
-        alert('Kobo API fetch failed! Check console for error.');
-      });
-    });
-  </script>
-
-  <!-- Placeholders for your other scripts -->
   <script src="js/charts.js"></script>
   <script src="js/map.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/koboFetch.js"></script>
+
 </body>
 </html>
