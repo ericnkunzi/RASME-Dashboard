@@ -1,61 +1,47 @@
-// Utility: Clear list contents
-function clearList(listElement) {
-  while(listElement.firstChild) {
-    listElement.removeChild(listElement.firstChild);
-  }
-}
+// main.js
 
-// Update the submitted projects list
-function updateProjectList(projects) {
-  const projectList = document.getElementById('projectList');
-  clearList(projectList);
-  projects.forEach(proj => {
-    const li = document.createElement('li');
-    li.textContent = proj.project_name || 'Unnamed Project';
-    projectList.appendChild(li);
-  });
-}
+// Global variable to store the fetched data
+let projectsData = [];
 
-// Update implementing agencies list
-function updateAgencyList(agencies) {
-  const agencyList = document.getElementById('agencyList');
-  clearList(agencyList);
-  agencies.forEach(agency => {
-    const li = document.createElement('li');
-    li.textContent = agency;
-    agencyList.appendChild(li);
-  });
-}
+// Call this function after fetching data from Kobo to update project list and enumerators table
+function updateProjectList(data) {
+  projectsData = data; // store globally for other scripts
 
-// Update enumerators table
-function updateCollectorTable(collectors) {
-  const tbody = document.getElementById('collectorTableBody');
-  clearList(tbody);
-  let totalSubmissions = 0;
+  const tbody = document.getElementById('project-list-body');
+  tbody.innerHTML = ''; // clear existing rows
 
-  collectors.forEach(collector => {
+  data.forEach((item) => {
+    // Assuming Kobo data fields:
+    // item.project_name, item.activity_sector, item.location (text), item.latitude, item.longitude
     const tr = document.createElement('tr');
 
-    const nameTd = document.createElement('td');
-    nameTd.textContent = collector.name;
-    nameTd.className = 'px-2 py-1';
-
-    const submissionsTd = document.createElement('td');
-    submissionsTd.textContent = collector.submissions;
-    submissionsTd.className = 'px-2 py-1';
-
-    const sectorTd = document.createElement('td');
-    sectorTd.textContent = collector.activity_sector;
-    sectorTd.className = 'px-2 py-1';
-
-    tr.appendChild(nameTd);
-    tr.appendChild(submissionsTd);
-    tr.appendChild(sectorTd);
-
+    tr.innerHTML = `
+      <td class="border border-gray-300 px-2 py-1">${item.project_name || 'N/A'}</td>
+      <td class="border border-gray-300 px-2 py-1">${item.activity_sector || 'N/A'}</td>
+      <td class="border border-gray-300 px-2 py-1">${item.location || 'N/A'}</td>
+    `;
     tbody.appendChild(tr);
+  });
+}
 
-    totalSubmissions += collector.submissions;
+// Update enumerators table (counts how many submissions per enumerator)
+function updateCollectorTable(data) {
+  const tbody = document.getElementById('enumerators-table-body');
+  tbody.innerHTML = '';
+
+  // Count submissions per enumerator name
+  const counts = {};
+  data.forEach((item) => {
+    const name = item.enumerator_name || 'Unknown';
+    counts[name] = (counts[name] || 0) + 1;
   });
 
-  document.getElementById('totalSubmissions').textContent = totalSubmissions;
+  for (const [name, count] of Object.entries(counts)) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="border border-gray-300 px-2 py-1">${name}</td>
+      <td class="border border-gray-300 px-2 py-1">${count}</td>
+    `;
+    tbody.appendChild(tr);
+  }
 }
